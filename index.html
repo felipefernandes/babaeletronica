@@ -6,33 +6,25 @@
     <title>Babá Eletrônica</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        body { margin: 0; padding: 0; background: #000; }
-        #videoFeed { width: 100vw; height: 100vh; object-fit: contain; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #cameraFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
-    <img id="videoFeed" src="" alt="Video Feed">
+    <iframe id="cameraFrame" src="http://192.168.1.178" allowfullscreen></iframe>
     <script>
-        const MOTION_EYE_URL = 'http://192.168.1.178';
-
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(() => console.log('Service Worker registrado'))
-                .catch(error => console.error('Erro ao registrar Service Worker:', error));
+            navigator.serviceWorker.register('service-worker.js');
         }
-
-        async function updateImage() {
-            try {
-                const response = await fetch('/proxy-image');
-                const blob = await response.blob();
-                const imageUrl = URL.createObjectURL(blob);
-                document.getElementById('videoFeed').src = imageUrl;
-            } catch (error) {
-                console.error('Erro ao atualizar imagem:', error);
-            }
-        }
-
-        setInterval(updateImage, 1000);
 
         // Manter a tela ligada
         async function keepScreenAwake() {
