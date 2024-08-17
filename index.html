@@ -22,10 +22,6 @@
 <body>
     <iframe id="cameraFrame" src="http://192.168.1.178" allowfullscreen></iframe>
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
-
         // Manter a tela ligada
         async function keepScreenAwake() {
             try {
