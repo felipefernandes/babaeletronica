@@ -13,33 +13,22 @@
 <body>
     <img id="videoFeed" src="" alt="Video Feed">
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
-
-        const videoFeed = document.getElementById('videoFeed');
         const MOTION_EYE_URL = 'http://192.168.1.178';
 
-        async function fetchImageUrl() {
-            try {
-                const response = await fetch(MOTION_EYE_URL);
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const cameraImg = doc.querySelector('.camera-frame .camera');
-                if (cameraImg) {
-                    return new URL(cameraImg.src, MOTION_EYE_URL).href;
-                }
-            } catch (error) {
-                console.error('Erro ao buscar URL da imagem:', error);
-            }
-            return null;
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(() => console.log('Service Worker registrado'))
+                .catch(error => console.error('Erro ao registrar Service Worker:', error));
         }
 
         async function updateImage() {
-            const imageUrl = await fetchImageUrl();
-            if (imageUrl) {
-                videoFeed.src = imageUrl;
+            try {
+                const response = await fetch('/proxy-image');
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                document.getElementById('videoFeed').src = imageUrl;
+            } catch (error) {
+                console.error('Erro ao atualizar imagem:', error);
             }
         }
 
