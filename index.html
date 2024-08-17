@@ -11,16 +11,36 @@
     </style>
 </head>
 <body>
-    <img id="videoFeed" src="http://192.168.1.178/picture/1/current/" alt="Video Feed">
+    <img id="videoFeed" src="" alt="Video Feed">
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js');
         }
 
         const videoFeed = document.getElementById('videoFeed');
-        
-        function updateImage() {
-            videoFeed.src = `http://192.168.1.178/picture/1/current/?_=${Date.now()}`;
+        const MOTION_EYE_URL = 'http://192.168.1.178';
+
+        async function fetchImageUrl() {
+            try {
+                const response = await fetch(MOTION_EYE_URL);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const cameraImg = doc.querySelector('.camera-frame .camera');
+                if (cameraImg) {
+                    return new URL(cameraImg.src, MOTION_EYE_URL).href;
+                }
+            } catch (error) {
+                console.error('Erro ao buscar URL da imagem:', error);
+            }
+            return null;
+        }
+
+        async function updateImage() {
+            const imageUrl = await fetchImageUrl();
+            if (imageUrl) {
+                videoFeed.src = imageUrl;
+            }
         }
 
         setInterval(updateImage, 1000);
