@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babá Eletrônica</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { margin: 0; padding: 0; background: #000; }
+        #videoFeed { width: 100vw; height: 100vh; object-fit: contain; }
+    </style>
+</head>
+<body>
+    <img id="videoFeed" src="http://192.168.1.178/picture/1/current/" alt="Video Feed">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+
+        const videoFeed = document.getElementById('videoFeed');
+        
+        function updateImage() {
+            videoFeed.src = `http://192.168.1.178/picture/1/current/?_=${Date.now()}`;
+        }
+
+        setInterval(updateImage, 1000);
+
+        // Manter a tela ligada
+        async function keepScreenAwake() {
+            try {
+                if ('wakeLock' in navigator) {
+                    let wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('WakeLock ativado');
+                    
+                    document.addEventListener('visibilitychange', async () => {
+                        if (document.visibilityState === 'visible') {
+                            wakeLock = await navigator.wakeLock.request('screen');
+                        } else {
+                            wakeLock.release();
+                            wakeLock = null;
+                        }
+                    });
+                } else {
+                    console.log('API WakeLock não suportada');
+                }
+            } catch (err) {
+                console.error(`${err.name}, ${err.message}`);
+            }
+        }
+
+        keepScreenAwake();
+    </script>
+</body>
+</html>
