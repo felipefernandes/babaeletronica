@@ -26,7 +26,7 @@
     </style>
 </head>
 <body>
-    <iframe id="cameraFrame" src="http://192.168.0.178" allowfullscreen></iframe>
+    <iframe id="cameraFrame" src="http://192.168.0.178:8081" allowfullscreen></iframe>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js');
@@ -35,7 +35,7 @@
         const videoFeed = document.getElementById('videoFeed');
         
         function updateImage() {
-           // videoFeed.src = `http://192.168.0.178/picture/1/current/?_=${Date.now()}`;
+           videoFeed.src = `http://192.168.0.178:8081`;
         }
 
         setInterval(updateImage, 1000);
