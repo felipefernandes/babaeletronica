@@ -17,11 +17,27 @@
             height: 100%;
             border: none;
         }
+        #videoFeed { 
+            width: 100vw; 
+            height: 100vh; 
+            object-fit: contain; 
+        }
     </style>
 </head>
 <body>
     <iframe id="cameraFrame" src="http://192.168.0.178" allowfullscreen></iframe>
     <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+
+        const videoFeed = document.getElementById('videoFeed');
+        
+        function updateImage() {
+           // videoFeed.src = `http://192.168.0.178/picture/1/current/?_=${Date.now()}`;
+        }
+
+        setInterval(updateImage, 1000);
         // Manter a tela ligada
         async function keepScreenAwake() {
             try {
